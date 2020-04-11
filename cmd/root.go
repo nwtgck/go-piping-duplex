@@ -7,11 +7,19 @@ import (
 	"os"
 )
 
+const (
+	ServerUrlEnvName = "PIPING_SERVER_URL"
+)
+
 var server string
 
 func init() {
 	cobra.OnInitialize()
-	RootCmd.Flags().StringVarP(&server,  "server",  "s", "https://ppng.io", "Piping Server URL")
+	defaultServer, ok := os.LookupEnv(ServerUrlEnvName)
+	if !ok {
+		defaultServer = "https://ppng.io"
+	}
+	RootCmd.Flags().StringVarP(&server,  "server",  "s", defaultServer, "Piping Server URL")
 }
 
 var RootCmd = &cobra.Command{
