@@ -1,7 +1,7 @@
 package piping_duplex
 
 import (
-	"fmt"
+	"github.com/nwtgck/go-piping-duplex/util"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -15,8 +15,12 @@ func Wait(server string, selfId string, peerId string) error {
 func Duplex(server string, selfPath string, peerPath string, input io.Reader, output io.Writer) error {
 	c := make(chan error)
 	go func() {
-		// TODO: use url join
-		res, err := http.Get(fmt.Sprintf("%s/%s", server, peerPath))
+		url, err := util.UrlJoin(server, peerPath)
+		if err != nil {
+			c <- err
+			return
+		}
+		res, err := http.Get(url)
 		if err != nil {
 			c <- err
 			return
@@ -27,8 +31,12 @@ func Duplex(server string, selfPath string, peerPath string, input io.Reader, ou
 	go func() {
 		// TODO: hard code
 		contentType := "application/octet-stream"
-		// TODO: use url join
-		_, err := http.Post(fmt.Sprintf("%s/%s", server, selfPath), contentType, input)
+		url, err := util.UrlJoin(server, selfPath)
+		if err != nil {
+			c <- err
+			return
+		}
+		_, err = http.Post(url, contentType, input)
 		c <- err
 	}()
 	var err error
