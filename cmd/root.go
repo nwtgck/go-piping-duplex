@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/nwtgck/go-piping-duplex"
+	"github.com/nwtgck/go-piping-duplex/version"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -12,6 +13,7 @@ const (
 )
 
 var server string
+var showsVersion bool
 
 func init() {
 	cobra.OnInitialize()
@@ -20,6 +22,7 @@ func init() {
 		defaultServer = "https://ppng.io"
 	}
 	RootCmd.Flags().StringVarP(&server,  "server",  "s", defaultServer, "Piping Server URL")
+	RootCmd.Flags().BoolVarP(&showsVersion, "version", "v", false, "show version")
 }
 
 var RootCmd = &cobra.Command{
@@ -27,6 +30,10 @@ var RootCmd = &cobra.Command{
 	Short: "piping-duplex",
 	Long:  "Duplex communication over Piping Server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if showsVersion {
+			fmt.Println(version.Version)
+			return nil
+		}
 		if len(args) != 2 {
 			return fmt.Errorf("Your ID and peer ID are required\n")
 		}
