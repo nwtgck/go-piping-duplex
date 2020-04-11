@@ -25,7 +25,10 @@ func Duplex(server string, selfPath string, peerPath string, input io.Reader, ou
 			c <- err
 			return
 		}
-		_, err = io.Copy(output, res.Body)
+		// NOTE: Buffer size used in io.Copy() is 32 * 1024
+		buf := make([]byte, 1024)
+		_, err = io.CopyBuffer(output, res.Body, buf)
+		//_, err = io.Copy(output, res.Body)
 		c <- err
 	}()
 	go func() {
