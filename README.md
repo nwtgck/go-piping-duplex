@@ -90,5 +90,6 @@ Usage:
 Flags:
   -h, --help            help for piping-duplex
   -s, --server string   Piping Server URL (default "https://ppng.io")
+  -c, --symmetric       use symmetric passphrase protection
   -v, --version         show version
 ```
