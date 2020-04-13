@@ -63,7 +63,15 @@ In another terminal in client host, type as follows.
 ssh -p 31376 localhost
 ```
 
-### Specify Piping Server
+## End-to-end encryption
+
+You can use passphrase-based end-to-end encryption with `--symmetric` or `-c` option.
+
+```bash
+piping-duplex -c aaa bbb
+```
+
+## Specify Piping Server
 
 You can specify Piping Server with `--server` or `-s` option.
 
