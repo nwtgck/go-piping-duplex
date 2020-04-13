@@ -9,44 +9,35 @@ import (
 )
 
 func Wait(server string, selfId string, peerId string) error {
-	return Duplex(server, selfId, peerId, strings.NewReader("OK"), ioutil.Discard)
+	r, err :=  Duplex(server, selfId, peerId, strings.NewReader("OK"))
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(ioutil.Discard, r)
+	return err
 }
 
-func Duplex(server string, selfPath string, peerPath string, input io.Reader, output io.Writer) error {
-	c := make(chan error)
-	go func() {
-		url, err := util.UrlJoin(server, peerPath)
-		if err != nil {
-			c <- err
-			return
-		}
-		res, err := http.Get(url)
-		if err != nil {
-			c <- err
-			return
-		}
-		_, err = io.Copy(output, res.Body)
-		c <- err
-	}()
+
+func Duplex(server string, selfPath string, peerPath string, r io.Reader) (io.Reader, error) {
+	postUrl, err := util.UrlJoin(server, selfPath)
+	if err != nil {
+		return nil, err
+	}
 	go func() {
 		// TODO: hard code
 		contentType := "application/octet-stream"
-		url, err := util.UrlJoin(server, selfPath)
+		_, err = http.Post(postUrl, contentType, r)
 		if err != nil {
-			c <- err
-			return
+			panic(err)
 		}
-		_, err = http.Post(url, contentType, input)
-		c <- err
 	}()
-	var err error
-	err = <- c
+	getUrl, err := util.UrlJoin(server, peerPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = <- c
+	res, err := http.Get(getUrl)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return res.Body, nil
 }
