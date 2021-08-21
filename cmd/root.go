@@ -24,7 +24,7 @@ func init() {
 	if !ok {
 		defaultServer = "https://ppng.io"
 	}
-	RootCmd.Flags().StringVarP(&server,  "server",  "s", defaultServer, "Piping Server URL")
+	RootCmd.Flags().StringVarP(&server, "server", "s", defaultServer, "Piping Server URL")
 	RootCmd.Flags().BoolVarP(&usesPassphrase, "symmetric", "c", false, "use symmetric passphrase protection")
 	RootCmd.Flags().BoolVarP(&showsVersion, "version", "v", false, "show version")
 }
@@ -53,13 +53,13 @@ var RootCmd = &cobra.Command{
 		var _ = passphrase
 		selfId := args[0]
 		peerId := args[1]
-		_, _ = fmt.Fprintf(os.Stderr, "[INFO] Server: %s\n", server)
-		_, _ = fmt.Fprintf(os.Stderr, "[INFO] Establishing between '%s' and '%s'...\n", selfId, peerId)
+		fmt.Fprintf(os.Stderr, "[INFO] Server: %s\n", server)
+		fmt.Fprintf(os.Stderr, "[INFO] Establishing between '%s' and '%s'...\n", selfId, peerId)
 		err = piping_duplex.Wait(server, selfId, peerId)
 		if err != nil {
 			return err
 		}
-		_, _ = fmt.Fprintln(os.Stderr, "[INFO] Established!")
+		fmt.Fprintln(os.Stderr, "[INFO] Established!")
 		var input io.Reader = os.Stdin
 		if usesPassphrase {
 			input = util.OpenpgpSymmetricallyEncrypt(input, []byte(passphrase))
