@@ -39,7 +39,7 @@ var RootCmd = &cobra.Command{
 			return nil
 		}
 		if len(args) != 2 {
-			return fmt.Errorf("Your ID and peer ID are required\n")
+			return fmt.Errorf("your ID and peer ID are required")
 		}
 		var passphrase string
 		var err error
