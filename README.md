@@ -81,10 +81,10 @@ piping-duplex -s https://piping.glitch.me aaa bbb
 
 OR
 
-specify with `$PIPING_SERVER_URL` environment variable as follows.
+specify with `$PIPING_SERVER` environment variable as follows.
 
 ```bash
-export PIPING_SERVER_URL=https://piping.glitch.me
+export PIPING_SERVER=https://piping.glitch.me
 ```
 
 ## Help

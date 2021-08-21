@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ServerUrlEnvName = "PIPING_SERVER_URL"
+	ServerUrlEnvName = "PIPING_SERVER"
 )
 
 var server string
