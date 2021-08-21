@@ -23,14 +23,12 @@ func Duplex(server string, selfPath string, peerPath string, r io.Reader) (io.Re
 	if err != nil {
 		return nil, err
 	}
-	go func() {
-		// TODO: hard code
-		contentType := "application/octet-stream"
-		_, err = http.Post(postUrl, contentType, r)
-		if err != nil {
-			panic(err)
-		}
-	}()
+	// TODO: hard code
+	contentType := "application/octet-stream"
+	_, err = http.Post(postUrl, contentType, r)
+	if err != nil {
+		return nil, err
+	}
 	getUrl, err := util.UrlJoin(server, peerPath)
 	if err != nil {
 		return nil, err
