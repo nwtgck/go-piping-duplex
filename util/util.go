@@ -1,10 +1,15 @@
 package util
 
 import (
+	"fmt"
+	"github.com/mattn/go-tty"
 	"golang.org/x/crypto/openpgp"
 	"io"
 	"net/url"
+	"os"
+	"os/signal"
 	"path"
+	"syscall"
 )
 
 // (from: https://stackoverflow.com/a/34668130/2885946)
@@ -15,6 +20,42 @@ func UrlJoin(rawurl string, elem ...string) (string, error) {
 	}
 	u.Path = path.Join(append([]string{u.Path}, elem...)...)
 	return u.String(), nil
+}
+
+func InputPassphrase() (string, error) {
+	tty, err := tty.Open()
+	if err != nil {
+		return "", err
+	}
+	defer tty.Close()
+	quitCh := make(chan os.Signal)
+	doneCh := make(chan struct{})
+	defer func() {
+		// End this input-function normally
+		doneCh <- struct{}{}
+	}()
+	go func() {
+		signal.Notify(quitCh, syscall.SIGINT)
+		for {
+			select {
+			// Signal from OS
+			case <-quitCh:
+				tty.Close()
+				fmt.Println()
+				os.Exit(0)
+			// End this input-function normally
+			case <-doneCh:
+				signal.Stop(quitCh)
+				return
+			}
+		}
+	}()
+	fmt.Fprint(tty.Output(), "Passphrase: ")
+	passphrase, err := tty.ReadPasswordNoEcho()
+	if err != nil {
+		return "", err
+	}
+	return passphrase, nil
 }
 
 func OpenpgpSymmetricallyEncrypt(plain io.Reader, passphrase []byte) io.Reader {

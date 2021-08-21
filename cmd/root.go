@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mattn/go-tty"
 	"github.com/nwtgck/go-piping-duplex"
 	"github.com/nwtgck/go-piping-duplex/util"
 	"github.com/nwtgck/go-piping-duplex/version"
@@ -43,25 +42,20 @@ var RootCmd = &cobra.Command{
 			return fmt.Errorf("Your ID and peer ID are required\n")
 		}
 		var passphrase string
+		var err error
 		if usesPassphrase {
-			tty, err := tty.Open()
+			passphrase, err = util.InputPassphrase()
 			if err != nil {
 				return err
 			}
-			defer tty.Close()
-			fmt.Fprint(tty.Output(), "Passphrase: ")
-			passphrase, err = tty.ReadPasswordNoEcho()
-			if err != nil {
-				return err
-			}
-			fmt.Fprintln(tty.Output(), "[INFO] End-to-end encrypted")
+			fmt.Fprintln(os.Stderr, "[INFO] End-to-end encrypted")
 		}
 		var _ = passphrase
 		selfId := args[0]
 		peerId := args[1]
 		_, _ = fmt.Fprintf(os.Stderr, "[INFO] Server: %s\n", server)
 		_, _ = fmt.Fprintf(os.Stderr, "[INFO] Establishing between '%s' and '%s'...\n", selfId, peerId)
-		err := piping_duplex.Wait(server, selfId, peerId)
+		err = piping_duplex.Wait(server, selfId, peerId)
 		if err != nil {
 			return err
 		}
