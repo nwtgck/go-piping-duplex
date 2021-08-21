@@ -9,14 +9,13 @@ import (
 )
 
 func Wait(server string, selfId string, peerId string) error {
-	r, err :=  Duplex(server, selfId, peerId, strings.NewReader("OK"))
+	r, err := Duplex(server, selfId, peerId, strings.NewReader("OK"))
 	if err != nil {
 		return err
 	}
 	_, err = io.Copy(ioutil.Discard, r)
 	return err
 }
-
 
 func Duplex(server string, selfPath string, peerPath string, r io.Reader) (io.Reader, error) {
 	postUrl, err := util.UrlJoin(server, selfPath)
