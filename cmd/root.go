@@ -55,11 +55,6 @@ var RootCmd = &cobra.Command{
 		peerId := args[1]
 		fmt.Fprintf(os.Stderr, "[INFO] Server: %s\n", server)
 		fmt.Fprintf(os.Stderr, "[INFO] Establishing between '%s' and '%s'...\n", selfId, peerId)
-		err = piping_duplex.Wait(server, selfId, peerId)
-		if err != nil {
-			return err
-		}
-		fmt.Fprintln(os.Stderr, "[INFO] Established!")
 		var input io.Reader = os.Stdin
 		if usesPassphrase {
 			input = util.OpenpgpSymmetricallyEncrypt(input, []byte(passphrase))
@@ -69,6 +64,7 @@ var RootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		fmt.Fprintln(os.Stderr, "[INFO] Established!")
 		if usesPassphrase {
 			var decrypted, err = util.OpenpgpSymmetricallyDecrypt(r, []byte(passphrase))
 			if err != nil {
