@@ -1,4 +1,6 @@
 # piping-duplex
+[![CI](https://github.com/nwtgck/go-piping-duplex/actions/workflows/ci.yml/badge.svg)](https://github.com/nwtgck/go-piping-duplex/actions/workflows/ci.yml) 
+
 Duplex communication over [Piping Server](https://github.com/nwtgck/piping-server)
 
 ## Installation
