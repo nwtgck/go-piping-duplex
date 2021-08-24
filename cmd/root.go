@@ -64,7 +64,6 @@ var RootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Fprintln(os.Stderr, "[INFO] Established!")
 		if usesPassphrase {
 			var decrypted, err = util.OpenpgpSymmetricallyDecrypt(r, []byte(passphrase))
 			if err != nil {
