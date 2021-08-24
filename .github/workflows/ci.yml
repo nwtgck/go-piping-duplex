@@ -47,12 +47,17 @@ jobs:
     - name: build
       run: CGO_ENABLED=0 go build -o piping-duplex main/main.go
     - name: Normal duplex
+      timeout-minutes: 1
       run: |
         set -xeu
         # (from: https://unix.stackexchange.com/a/306107/316870)
         id1=`openssl rand -hex 12`
         id2=`openssl rand -hex 12`
-        echo hello | ./piping-duplex -s http://localhost:8080 $id1 $id2 &
-        seq 10 | ./piping-duplex -s http://localhost:8080 $id2 $id1 | base64
+        (echo hello | ./piping-duplex -s http://localhost:8080 $id1 $id2) &
+        first_pid=$!
+        (seq 10 | ./piping-duplex -s http://localhost:8080 $id2 $id1 | base64) &
+        second_pid=$!
+        wait $first_pid
+        wait $second_pid
     - name: Show Piping Server logs
       run: docker logs piping-server
