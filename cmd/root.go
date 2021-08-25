@@ -60,7 +60,7 @@ var RootCmd = &cobra.Command{
 			input = util.OpenpgpSymmetricallyEncrypt(input, []byte(passphrase))
 		}
 		output := os.Stdout
-		r, uploadFinishErrCh, err := piping_duplex.Duplex(server, selfId, peerId, input)
+		r, uploadFinishErrCh, err := piping_duplex.DuplexReader(server, selfId, peerId, input)
 		if err != nil {
 			return err
 		}
