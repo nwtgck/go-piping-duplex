@@ -53,11 +53,9 @@ jobs:
         # (from: https://unix.stackexchange.com/a/306107/316870)
         id1=`openssl rand -hex 12`
         id2=`openssl rand -hex 12`
-        (echo hello | ./piping-duplex -s http://localhost:8080 $id1 $id2) &
-        first_pid=$!
-        (seq 10 | ./piping-duplex -s http://localhost:8080 $id2 $id1 | base64) &
-        second_pid=$!
-        wait $first_pid
-        wait $second_pid
+        tmux new-session -d bash -c "echo hello | ./piping-duplex -s http://localhost:8080 $id1 $id2 > first_duplex.log"
+        seq 10 | ./piping-duplex -s http://localhost:8080 $id2 $id1 | base64
+        sleep 1
+        cat first_duplex.log
     - name: Show Piping Server logs
       run: docker logs piping-server
