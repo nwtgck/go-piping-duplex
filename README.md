@@ -45,6 +45,12 @@ aGVsbG8K
 
 NOTE: `aGVsbG8K` is base64-encoded "hello\n".
 
+### Grammar
+
+```bash
+piping-duplex <upload path> <download path>
+```
+
 ### Example SSH
 
 Here is an example to use SSH over HTTPS via Piping Server.

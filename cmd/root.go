@@ -39,7 +39,7 @@ var RootCmd = &cobra.Command{
 			return nil
 		}
 		if len(args) != 2 {
-			return fmt.Errorf("your ID and peer ID are required")
+			return fmt.Errorf("upload path and download are required")
 		}
 		var passphrase string
 		var err error
@@ -50,17 +50,16 @@ var RootCmd = &cobra.Command{
 			}
 			fmt.Fprintln(os.Stderr, "[INFO] End-to-end encrypted")
 		}
-		var _ = passphrase
-		selfId := args[0]
-		peerId := args[1]
+		uploadPath := args[0]
+		downloadPath := args[1]
 		fmt.Fprintf(os.Stderr, "[INFO] Server: %s\n", server)
-		fmt.Fprintf(os.Stderr, "[INFO] Establishing between '%s' and '%s'...\n", selfId, peerId)
+		fmt.Fprintf(os.Stderr, "[INFO] Your upload path: '%s', your download path: '%s'\n", uploadPath, downloadPath)
 		var input io.Reader = os.Stdin
 		if usesPassphrase {
 			input = util.OpenpgpSymmetricallyEncrypt(input, []byte(passphrase))
 		}
 		output := os.Stdout
-		r, uploadFinishErrCh, err := piping_duplex.DuplexReader(server, selfId, peerId, input)
+		r, uploadFinishErrCh, err := piping_duplex.DuplexReader(server, uploadPath, downloadPath, input)
 		if err != nil {
 			return err
 		}

@@ -8,9 +8,9 @@ import (
 	"net/http"
 )
 
-func DuplexReader(server string, selfPath string, peerPath string, r io.Reader) (io.Reader, <-chan error, error) {
+func DuplexReader(server string, uploadPath string, downloadPath string, r io.Reader) (io.Reader, <-chan error, error) {
 	uploadFinishErrCh := make(chan error)
-	postUrl, err := util.UrlJoin(server, selfPath)
+	postUrl, err := util.UrlJoin(server, uploadPath)
 	if err != nil {
 		return nil, uploadFinishErrCh, err
 	}
@@ -27,7 +27,7 @@ func DuplexReader(server string, selfPath string, peerPath string, r io.Reader) 
 		_, err := io.Copy(ioutil.Discard, postRes.Body)
 		uploadFinishErrCh <- err
 	}()
-	getUrl, err := util.UrlJoin(server, peerPath)
+	getUrl, err := util.UrlJoin(server, downloadPath)
 	if err != nil {
 		return nil, uploadFinishErrCh, err
 	}
